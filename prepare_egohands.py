@@ -44,6 +44,8 @@ CONVERTED_LBL_DIR = './egohands_kitti_formatted/labels'
 
 VISUALIZE = False  # visualize each image (for debugging)
 
+label_keys = ('myleft', 'myright','yourleft', 'yourright')
+
 
 def parse_args():
     """Parse input arguments."""
@@ -106,7 +108,7 @@ def polygon_to_box(polygon):
     return [x_min, y_min, x_max, y_max]
 
 
-def box_to_line(box):
+def box_to_line(box, label):
     """Convert 1 bounding box into 1 line in the KITTI txt file.
 
     # Arguments
@@ -136,7 +138,7 @@ def box_to_line(box):
                         in detection, needed for p/r curves, higher is
                         better.
     """
-    return ' '.join(['hand',
+    return ' '.join([label,
                      '0',
                      '0',
                      '0',
@@ -174,11 +176,14 @@ def convert_one_folder(folder):
         dst_txt = folder + '_' + frame + '.txt'
         boxes = []
         with open(os.path.join(CONVERTED_LBL_DIR, dst_txt), 'w') as f:
-            for polygon in polygons[i]:
+                     
+            for label in label_keys:
+                polygon = polygons[i][label]
+            #for polygon in polygons[i]:
                 box = polygon_to_box(polygon)
                 if box:
                     boxes.append(box)
-                    f.write(box_to_line(box) + '\n')
+                    f.write(box_to_line(box, label) + '\n')
 
         if VISUALIZE:
             img = cv2.imread(os.path.join(CONVERTED_IMG_DIR, dst_jpg))

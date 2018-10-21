@@ -3,7 +3,7 @@
 usage()
 {
     echo
-    echo "Usage: ./trash.sh <model_name>"
+    echo "Usage: ./train.sh <model_name>"
     echo
     echo "where <model_name> could be one of the following:"
     echo "    ssd_mobilenet_v1_egohands"
@@ -38,6 +38,7 @@ case $1 in
     faster_rcnn_inception_resnet_v2_atrous_egohands )
         MODEL_DIR=$1
         NUM_TRAIN_STEPS=50000
+        NUM_EVAL_STEPS=250
         ;;
     * )
         usage
@@ -53,5 +54,6 @@ PYTHONPATH=`pwd`/models/research:`pwd`/models/research/slim \
             --pipeline_config_path=${PIPELINE_CONFIG_PATH} \
             --model_dir=${MODEL_DIR} \
             --num_train_steps=${NUM_TRAIN_STEPS} \
+            --num_eval_steps=${NUM_EVAL_STEPS} \
             --sample_1_of_n_eval_samples=1 \
             --alsologtostderr
